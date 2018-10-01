@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
+	"./handlers"
+
 	"github.com/labstack/echo"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -14,9 +16,10 @@ func main() {
 
 	e := echo.New()
 
-	e.GET("/tasks", getTasks)
-	e.PUT("/tasks", updateTask)
-	e.DELETE("/tasks/:id", deleteTask)
+	e.File("/", "public/index.html")
+	e.GET("/tasks", handlers.GetTasks(database))
+	e.PUT("/tasks", handlers.PutTasks(database))
+	e.DELETE("/tasks/:id", handlers.DeleteTasks(database))
 
 	e.Start(":1234")
 }
@@ -52,16 +55,4 @@ func migrateDatabase(database *sql.DB) {
 	}
 
 	fmt.Println("Table tasks created")
-}
-
-func getTasks(context echo.Context) error {
-	return context.JSON(200, "GET TASKS")
-}
-
-func updateTask(context echo.Context) error {
-	return context.JSON(200, "UPDATE TASKS")
-}
-
-func deleteTask(context echo.Context) error {
-	return context.JSON(200, "DELETE TASKS"+context.Param("id"))
 }
